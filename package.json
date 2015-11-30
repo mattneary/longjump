@@ -1,0 +1,11 @@
+{
+  "name": "longjump",
+  "version": "1.0.0",
+  "description": "Cross-process buffer jumping for vim.",
+  "main": "longjump.sh",
+  "author": "“Matt",
+  "license": "MIT",
+  "bin": {
+    "longjump": "./longjump.sh"
+  }
+}
