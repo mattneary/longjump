@@ -7,7 +7,7 @@ tmux_session=`tmux display-message -p '#S'`
 
 has_buffers() {
   tmux list-windows -t "$tmux_session" -F '#{window_index}' | while read window; do
-    tmux list-panes -t "test:$window" -F '#{pane_index} #{pane_pid}' | while read pane; do
+    tmux list-panes -t "$tmux_session:$window" -F '#{pane_index} #{pane_pid}' | while read pane; do
       pid=`echo "$pane" | cut -d' ' -f 2`
       tasks=`pgrep -P $pid`
       for task in $tasks; do
@@ -31,14 +31,14 @@ buffers() {
     fi
   done) &
   tmux list-windows -t "$tmux_session" -F '#{window_index}' | while read window; do
-    tmux list-panes -t "test:$window" -F '#{pane_index} #{pane_pid}' | while read pane; do
+    tmux list-panes -t "$tmux_session:$window" -F '#{pane_index} #{pane_pid}' | while read pane; do
       pane_num=`echo "$pane" | cut -d' ' -f 1`
       pid=`echo "$pane" | cut -d' ' -f 2`
       tasks=`pgrep -P $pid`
       for task in $tasks; do
         vim=`ps $task | sed 1d | grep '[A-Z]+' | grep 'Vim' | cut -d' ' -f 1`
         if [ $vim ]; then
-          tmux send-keys -t "test:$window.$pane_num" Escape ":call BroadcastBuffers('$window', '$pane_num', '$fifo')" Enter
+          tmux send-keys -t "$tmux_session:$window.$pane_num" Escape ":call BroadcastBuffers('$window', '$pane_num', '$fifo')" Enter
         fi
       done
     done
